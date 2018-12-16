@@ -1,0 +1,165 @@
+package com.sample
+ 
+import com.sample.DroolsTest.Message
+import javax.swing.JFrame
+import javax.swing.JOptionPane
+import javax.swing.Icon;
+import org.kie.api.runtime.*
+
+declare enum Messages
+    IMPALED("Impaled during intercourse"),
+    DECAPITATED("Decapitated by a redneck zombie");
+
+    value: String;
+    end
+
+declare enum Answers
+    YES("Yes"),
+    NO("No"),
+    CAMP("At camp"),
+    PARTYING("Partying with my friends");
+    value: String;
+
+    end
+
+declare enum Questions
+
+    ARE_ALONE("Are you alone?"),
+    IN_THE_CITY("Are you in the city?"),
+    IN_THE_WOODS("Are you int the woods?"),
+    IN_THE_CABIN("Are you int the cabin?"),
+    WHAT_DOING("Uh.Oh. What are you doing?"),
+    SEX("Are you having sex?");
+
+
+    value: String;
+    end
+
+declare Question
+    question: Questions
+    answer: Answers
+end
+
+function void askUser(Questions question, KieRuntime krt){
+    Answers[] answers = {Answers.YES,Answers.NO};
+    String[] options = new String[answers.length];
+        for(int i = 0; i < options.length; i++) {
+            options[i] = answers[i].getValue();
+        }
+     int n = JOptionPane.showOptionDialog(
+                    (JFrame) krt.getGlobal("frame"),
+                    question.getValue(),
+                    "",
+                    JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    (Icon) null,
+                    options,
+                    options[0]
+        		);
+        Question q;
+        if(n >= 0) {
+            q = new Question(question, answers[n]);
+        } else {
+            q = new Question(question, null);
+        }
+        krt.insert(q);
+
+}
+
+function void askWithOptions(Questions question, KieRuntime krt, Answers[] answers){
+    String[] options = new String[answers.length];
+        for(int i = 0; i < options.length; i++) {
+            options[i] = answers[i].getValue();
+        }
+     int n = JOptionPane.showOptionDialog(
+                    (JFrame) krt.getGlobal("frame"),
+                    question.getValue(),
+                    "",
+                    JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    (Icon) null,
+                    options,
+                    options[0]
+                );
+        Question q;
+        if(n >= 0) {
+            q = new Question(question, answers[n]);
+        } else {
+            q = new Question(question, null);
+        }
+        krt.insert(q);
+
+    }
+
+function void showMessage(Messages message, KieRuntime krt){
+    JOptionPane.showMessageDialog((JFrame) krt.getGlobal("frame"), message.getValue());
+}
+
+rule "Hello World"
+    when
+        m : Message( status == Message.HELLO, myMessage : message )
+    then
+        System.out.println( myMessage );
+        m.setMessage( "Goodbye cruel world" );
+        m.setStatus( Message.GOODBYE );
+        update( m );
+end
+
+rule "GoodBye"
+    when
+        Message( status == Message.GOODBYE, myMessage : message )
+    then
+        System.out.println( myMessage );
+end
+
+rule init
+    when
+    then
+        askUser(Questions.ARE_ALONE, kcontext.getKieRuntime());
+
+end
+
+rule "ALONE/NO"
+    when
+        Question(question == Questions.ARE_ALONE && answer == Answers.NO)
+    then
+        askUser(Questions.IN_THE_CITY,kcontext.getKieRuntime());
+end
+
+rule "INCITY/NO"
+    when
+        Question(question == Questions.IN_THE_CITY && answer == Answers.NO)
+    then
+        askUser(Questions.IN_THE_WOODS, kcontext.getKieRuntime());
+end
+
+rule "INWOODS/YES"
+    when
+        Question(question == Questions.IN_THE_WOODS && answer == Answers.YES)
+    then
+        askUser(Questions.IN_THE_CABIN, kcontext.getKieRuntime());
+end
+
+rule "INCABIN/YES"
+    when
+        Question(question == Questions.IN_THE_CABIN && answer == Answers.YES)
+    then
+        askWithOptions(Questions.WHAT_DOING, kcontext.getKieRuntime(), new Answers[]{
+            Answers.PARTYING, Answers.CAMP
+        });
+
+end
+
+rule "DOING/CAMP"
+    when
+        Question(question == Questions.WHAT_DOING && answer == Answers.CAMP)
+    then
+        askUser(Questions.SEX, kcontext.getKieRuntime());
+end
+
+rule "CAMPSEXYES"
+    when
+        Question(question == Questions.SEX && answer == Answers.YES)
+    then
+        showMessage(Messages.DECAPITATED,kcontext.getKieRuntime());
+end
