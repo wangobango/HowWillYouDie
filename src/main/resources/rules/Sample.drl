@@ -7,8 +7,34 @@ import javax.swing.Icon;
 import org.kie.api.runtime.*
 
 declare enum Messages
-    IMPALED("Impaled during intercourse"),
-    DECAPITATED("Decapitated by a redneck zombie");
+    IMPALED_FRIDAY("Impaled during intercourse - FRIDAY THE 13TH II"),
+    STABBED_PSYCHO("Stabbed to death in your birthday suit - PSYCHO"),
+    DECAPITATED_CABIN("Decapitated by a redneck zombie - CABIN IN THE WOODS"),
+    MURDERED_NIGHTMARE("Murdered in your dream - NIGHTMARE ON ELM STREET"),
+    STABBED_HALLOWEEN("Stabbed to death by Michael Myers - HALLOWEEN"),
+    FREEZE_SHINING("You freeze to death while chasing your son - THE SHINING"),
+    STABBED_SCREAM("Stabbed to death by ghostface - SCREAM"),
+    STUCK_1408("Stuck for etternity in a haunted hotel room - 1408"),
+    MYSTERIOUSLY_RING("Mysteriously die 7 days later - THE RING"),
+    RIPPED_28("Ripped to shreds by zombies - 28 DAYS LATER"),
+    MURDERED_CHOPPING("Murdered by killbots while partying - CHOPPING MALL"),
+    CORNERED_DAWN("Cornered by zombies and turned into the endead - DAWN OF THE DEAD"),
+    EATEN_CLOVERFIELD("Eaten alive by an alien - CLOVERFIELD"),
+    EYES_JEEPERS("Your eyes are ripped out by a creeper - JEEPERS CREEPERS"),
+    IMPALED_TEXAS("Impaled by a meat hook - THE TEXAS CHAINSAW MASSACRE"),
+    KILLED_WRONG("Killed with a strip of barbed wire - WRONG TURN"),
+    DIE_WITCH("Die of mysterious circumstances - THE BLAIR WITCH PROJECT"),
+    MERMAN("You stop overnight and get turned into a merman - HOUSE OF 1000 CORPSES"),
+    WORLD_ENDS("The world ends thanks to you - CABIN IN THE WOODS"),
+    DISMEMBERED("Dismembered by an axe - THE EVIL DEAD"),
+    DRIVEN_AMITYVILLE("Driven out of the house by murderous ghosts - THE AMITYVILLE HORROR"),
+    AS_GOOD_AS_DEAD("Well you're as good as dead. See every horror movie ever!"),
+    NETFLIX("You have Netflix and all is well!"),
+    NO_MURDERS("No murders or burial ground? Talk about freat resale value! You survived!"),
+    AVOIDED("You've aboided enough cliches to make it out of this alive!"),
+    HEAD_FRIDAY("You get your head chopped off - FRIDAY THE 13TH");
+
+
 
     value: String;
     end
@@ -17,7 +43,8 @@ declare enum Answers
     YES("Yes"),
     NO("No"),
     CAMP("At camp"),
-    PARTYING("Partying with my friends");
+    PARTYING("Partying with my friends"),
+    OBVIOUSLY("Obviously yes");
     value: String;
 
     end
@@ -25,9 +52,29 @@ declare enum Answers
 declare enum Questions
 
     ARE_ALONE("Are you alone?"),
-    IN_THE_CITY("Are you in the city?"),
-    IN_THE_WOODS("Are you int the woods?"),
-    IN_THE_CABIN("Are you int the cabin?"),
+    IN_HOTEL("Are you in a hotel?"),
+    AT_HOME("Are you at home?"),
+    ON_PHONE("Are you on the phone?"),
+    IN_SHOWER("Are you in the shower?"),
+    ASLEEP("Are you asleep?"),
+    BABYSITTING("Are you babysitting?"),
+    HEDGE_MAZE("Are you in a hedge maze?"),
+    VHS("Are you watching VHS tape?"),
+    SEPARATED("Were you separated from your group?"),
+    IN_CITY("Are you in the city?"),
+    IN_WOODS("Are you int the woods?"),
+    IN_MALL("Are you in a mall?"),
+    PARTYING_ROOFTOP("Are you partying on a rooftop?"),
+    ON_ROAD("Are you on the road?"),
+    ZOMBIE("Is there zombie apocalypse raging outside?"),
+    CAR_OFF_ROAD("Did your cat get run off the road?"),
+    FILMING("Are you filming everything?"),
+    SIDE_TRIP("Dida you take side trip?"),
+    IN_HOUSE("Are you in a house?"),
+    MURDER_IN_HOUSE("Was there a murder in the house?"),
+    BOOK_OF_DEAD("Did you find a book of the dead?"),
+    BOOK_OF_DEAD_SEX("Are you having sex?"),
+    IN_CABIN("Are you int the cabin?"),
     WHAT_DOING("Uh.Oh. What are you doing?"),
     SEX("Are you having sex?");
 
@@ -123,32 +170,321 @@ rule "ALONE/NO"
     when
         Question(question == Questions.ARE_ALONE && answer == Answers.NO)
     then
-        askUser(Questions.IN_THE_CITY,kcontext.getKieRuntime());
+        askUser(Questions.IN_CITY,kcontext.getKieRuntime());
+end
+
+rule "ALONE/YES"
+    when
+        Question(question == Questions.ARE_ALONE && answer == Answers.YES)
+    then
+        askUser(Questions.AT_HOME,kcontext.getKieRuntime());
+end
+
+rule "HOME/YES"
+    when
+        Question(question == Questions.AT_HOME && answer == Answers.YES)
+    then
+        askUser(Questions.ON_PHONE,kcontext.getKieRuntime());
+end
+
+rule "HOME/NO"
+    when
+        Question(question == Questions.AT_HOME && answer == Answers.NO)
+    then
+        askUser(Questions.IN_HOTEL,kcontext.getKieRuntime());
+end
+
+rule "PHONE/YES"
+    when
+        Question(question == Questions.ON_PHONE && answer == Answers.YES)
+    then
+        showMessage(Messages.STABBED_SCREAM,kcontext.getKieRuntime());
+end
+
+rule "PHONE/NO"
+    when
+        Question(question == Questions.ON_PHONE && answer == Answers.NO)
+    then
+        askUser(Questions.ASLEEP,kcontext.getKieRuntime());
+end
+
+rule "HOTEL/YES"
+    when
+        Question(question == Questions.IN_HOTEL && answer == Answers.YES)
+    then
+        askUser(Questions.IN_SHOWER,kcontext.getKieRuntime());
+end
+
+rule "HOTEL/NO"
+    when
+        Question(question == Questions.IN_HOTEL && answer == Answers.NO)
+    then
+        askUser(Questions.HEDGE_MAZE,kcontext.getKieRuntime());
+end
+
+
+rule "ASLEEP/YES"
+    when
+        Question(question == Questions.ASLEEP && answer == Answers.YES)
+    then
+        showMessage(Messages.MURDERED_NIGHTMARE,kcontext.getKieRuntime());
+
+end
+
+rule "ASLEEP/NO"
+    when
+        Question(question == Questions.ASLEEP && answer == Answers.NO)
+    then
+        askUser(Questions.BABYSITTING,kcontext.getKieRuntime());
+end
+
+rule "SHOWER/YES"
+    when
+        Question(question == Questions.IN_SHOWER && answer == Answers.YES)
+    then
+        showMessage(Messages.STABBED_PSYCHO,kcontext.getKieRuntime());
+end
+
+rule "SHOWER/NO"
+    when
+        Question(question == Questions.IN_SHOWER && answer == Answers.NO)
+    then
+        showMessage(Messages.STUCK_1408,kcontext.getKieRuntime());
+end
+
+rule "HEDGE/YES"
+    when
+        Question(question == Questions.HEDGE_MAZE && answer == Answers.YES)
+    then
+        showMessage(Messages.FREEZE_SHINING,kcontext.getKieRuntime());
+end
+
+rule "HEDGE/NO"
+    when
+        Question(question == Questions.HEDGE_MAZE && answer == Answers.NO)
+    then
+       askWithOptions(Questions.SEPARATED, kcontext.getKieRuntime(), new Answers[]{
+                    Answers.OBVIOUSLY
+                });
+end
+
+rule "SEPARATED/YES"
+    when
+        Question(question == Questions.SEPARATED && answer == Answers.OBVIOUSLY)
+    then
+        showMessage(Messages.AS_GOOD_AS_DEAD,kcontext.getKieRuntime());
+end
+
+rule "BABYSITTING/YES"
+    when
+        Question(question == Questions.BABYSITTING && answer == Answers.YES)
+    then
+        showMessage(Messages.STABBED_HALLOWEEN,kcontext.getKieRuntime());
+
+end
+
+rule "BABYSITTING/NO"
+    when
+        Question(question == Questions.BABYSITTING && answer == Answers.NO)
+    then
+        askUser(Questions.VHS,kcontext.getKieRuntime());
+end
+
+rule "VHS/YES"
+    when
+        Question(question == Questions.VHS && answer == Answers.YES)
+    then
+        showMessage(Messages.MYSTERIOUSLY_RING,kcontext.getKieRuntime());
+
+end
+
+rule "VHS/NO"
+    when
+        Question(question == Questions.VHS && answer == Answers.NO)
+    then
+        showMessage(Messages.NETFLIX,kcontext.getKieRuntime());
+end
+
+
+
+
+
+rule "INCITY/YES"
+    when
+        Question(question == Questions.IN_CITY && answer == Answers.YES)
+    then
+        askUser(Questions.IN_MALL, kcontext.getKieRuntime());
 end
 
 rule "INCITY/NO"
     when
-        Question(question == Questions.IN_THE_CITY && answer == Answers.NO)
+        Question(question == Questions.IN_CITY && answer == Answers.NO)
     then
-        askUser(Questions.IN_THE_WOODS, kcontext.getKieRuntime());
+        askUser(Questions.IN_WOODS, kcontext.getKieRuntime());
 end
 
 rule "INWOODS/YES"
     when
-        Question(question == Questions.IN_THE_WOODS && answer == Answers.YES)
+        Question(question == Questions.IN_WOODS && answer == Answers.YES)
     then
-        askUser(Questions.IN_THE_CABIN, kcontext.getKieRuntime());
+        askUser(Questions.IN_CABIN, kcontext.getKieRuntime());
+end
+
+rule "INWOODS/NO"
+    when
+        Question(question == Questions.IN_WOODS && answer == Answers.NO)
+    then
+        askUser(Questions.ON_ROAD, kcontext.getKieRuntime());
+end
+
+rule "INMALL/YES"
+    when
+        Question(question == Questions.IN_MALL && answer == Answers.YES)
+    then
+        askUser(Questions.ZOMBIE, kcontext.getKieRuntime());
+end
+
+rule "INMALL/NO"
+    when
+        Question(question == Questions.IN_MALL && answer == Answers.NO)
+    then
+        askUser(Questions.PARTYING_ROOFTOP, kcontext.getKieRuntime());
+end
+
+rule "ZOMBIE/YES"
+    when
+        Question(question == Questions.ZOMBIE && answer == Answers.YES)
+    then
+        showMessage(Messages.CORNERED_DAWN,kcontext.getKieRuntime());
+end
+
+rule "ZOMBIE/NO"
+    when
+        Question(question == Questions.ZOMBIE && answer == Answers.NO)
+    then
+        showMessage(Messages.MURDERED_CHOPPING,kcontext.getKieRuntime());
+end
+
+rule "PARTYROOF/YES"
+    when
+        Question(question == Questions.PARTYING_ROOFTOP && answer == Answers.YES)
+    then
+        showMessage(Messages.EATEN_CLOVERFIELD,kcontext.getKieRuntime());
+end
+
+rule "PARTYROOF/NO"
+    when
+        Question(question == Questions.PARTYING_ROOFTOP && answer == Answers.NO)
+    then
+        showMessage(Messages.RIPPED_28,kcontext.getKieRuntime());
 end
 
 rule "INCABIN/YES"
     when
-        Question(question == Questions.IN_THE_CABIN && answer == Answers.YES)
+        Question(question == Questions.IN_CABIN && answer == Answers.YES)
     then
         askWithOptions(Questions.WHAT_DOING, kcontext.getKieRuntime(), new Answers[]{
             Answers.PARTYING, Answers.CAMP
         });
 
 end
+
+rule "INCABIN/NO"
+    when
+        Question(question == Questions.IN_CABIN && answer == Answers.NO)
+    then
+        askUser(Questions.FILMING, kcontext.getKieRuntime());
+end
+
+rule "ONROAD/YES"
+    when
+        Question(question == Questions.ON_ROAD && answer == Answers.YES)
+    then
+        askUser(Questions.CAR_OFF_ROAD, kcontext.getKieRuntime());
+end
+
+rule "ONROAD/NO"
+    when
+        Question(question == Questions.ON_ROAD && answer == Answers.NO)
+    then
+        askUser(Questions.IN_HOUSE, kcontext.getKieRuntime());
+end
+
+rule "CAROFFROAD/YES"
+    when
+        Question(question == Questions.CAR_OFF_ROAD && answer == Answers.YES)
+    then
+        showMessage(Messages.EYES_JEEPERS,kcontext.getKieRuntime());
+end
+
+rule "CAROFFROAD/NO"
+    when
+        Question(question == Questions.CAR_OFF_ROAD && answer == Answers.NO)
+    then
+        askUser(Questions.SIDE_TRIP, kcontext.getKieRuntime());
+end
+
+rule "SIDETRIP/YES"
+    when
+        Question(question == Questions.SIDE_TRIP && answer == Answers.YES)
+    then
+        showMessage(Messages.IMPALED_TEXAS,kcontext.getKieRuntime());
+end
+
+rule "SIDETRIP/NO"
+    when
+        Question(question == Questions.SIDE_TRIP && answer == Answers.NO)
+    then
+        showMessage(Messages.MERMAN,kcontext.getKieRuntime());
+end
+
+rule "INHOUSE/YES"
+    when
+        Question(question == Questions.IN_HOUSE && answer == Answers.YES)
+    then
+        askUser(Questions.MURDER_IN_HOUSE, kcontext.getKieRuntime());
+end
+
+rule "INHOUSE/NO"
+    when
+        Question(question == Questions.IN_HOUSE && answer == Answers.NO)
+    then
+        showMessage(Messages.AVOIDED,kcontext.getKieRuntime());
+
+end
+
+rule "MURDERINHOUSE/YES"
+    when
+        Question(question == Questions.MURDER_IN_HOUSE && answer == Answers.YES)
+    then
+        showMessage(Messages.DRIVEN_AMITYVILLE,kcontext.getKieRuntime());
+end
+
+rule "MURDERINHOUSE/NO"
+    when
+        Question(question == Questions.MURDER_IN_HOUSE && answer == Answers.NO)
+    then
+        showMessage(Messages.NO_MURDERS,kcontext.getKieRuntime());
+
+end
+
+rule "FILMING/YES"
+    when
+        Question(question == Questions.FILMING && answer == Answers.YES)
+    then
+        showMessage(Messages.DIE_WITCH,kcontext.getKieRuntime());
+
+end
+
+rule "FILMING/NO"
+    when
+        Question(question == Questions.FILMING && answer == Answers.NO)
+    then
+        showMessage(Messages.KILLED_WRONG,kcontext.getKieRuntime());
+
+end
+
+
 
 rule "DOING/CAMP"
     when
@@ -157,9 +493,58 @@ rule "DOING/CAMP"
         askUser(Questions.SEX, kcontext.getKieRuntime());
 end
 
-rule "CAMPSEXYES"
+rule "DOING/PARTYING"
+    when
+        Question(question == Questions.WHAT_DOING && answer == Answers.PARTYING)
+    then
+        askUser(Questions.BOOK_OF_DEAD, kcontext.getKieRuntime());
+end
+
+
+rule "CAMPSEX/YES"
     when
         Question(question == Questions.SEX && answer == Answers.YES)
     then
-        showMessage(Messages.DECAPITATED,kcontext.getKieRuntime());
+        showMessage(Messages.DECAPITATED_CABIN,kcontext.getKieRuntime());
 end
+
+rule "CAMPSEX/NO"
+    when
+        Question(question == Questions.SEX && answer == Answers.NO)
+    then
+        showMessage(Messages.WORLD_ENDS,kcontext.getKieRuntime());
+
+end
+
+
+rule "BOOKOFDEAD/NO"
+    when
+        Question(question == Questions.BOOK_OF_DEAD && answer == Answers.NO)
+    then
+        askUser(Questions.BOOK_OF_DEAD_SEX, kcontext.getKieRuntime());
+end
+
+rule "BOOKOFDEAD/YES"
+    when
+        Question(question == Questions.BOOK_OF_DEAD && answer == Answers.YES)
+    then
+        showMessage(Messages.DISMEMBERED,kcontext.getKieRuntime());
+
+end
+
+rule "BOOKSEX/YES"
+    when
+        Question(question == Questions.BOOK_OF_DEAD_SEX && answer == Answers.YES)
+    then
+        showMessage(Messages.IMPALED_FRIDAY,kcontext.getKieRuntime());
+
+end
+
+rule "BOOKSEX/NO"
+    when
+        Question(question == Questions.BOOK_OF_DEAD_SEX && answer == Answers.NO)
+    then
+        showMessage(Messages.HEAD_FRIDAY,kcontext.getKieRuntime());
+
+end
+
